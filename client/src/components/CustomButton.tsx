@@ -1,6 +1,7 @@
 import clsx from "clsx";
 import { CSSProperties } from "react";
 import { useSnapshot } from "valtio";
+
 import state from "../store";
 
 type ButtonType = "filled";
