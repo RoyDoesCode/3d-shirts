@@ -13,14 +13,14 @@ const Shirt = () => {
     const fullTexture = useTexture(snapshot.fullDecal);
 
     useFrame((_, delta) =>
-        // @ts-expect-error
+        // @ts-ignore
         easing.dampC(materials.lambert1.color, snapshot.color, 0.25, delta)
     );
 
     return (
         <group key={JSON.stringify(state)}>
             <mesh
-                // @ts-expect-error
+                // @ts-ignore
                 geometry={nodes.T_Shirt_male.geometry}
                 castShadow
                 material={materials.lambert1}
@@ -42,9 +42,9 @@ const Shirt = () => {
                         rotation={[0, 0, 0]}
                         scale={0.15}
                         map={logoTexture}
-                        // map-anisotropy={16}
+                        // @ts-ignore
+                        anisotropy={16}
                         depthTest={false}
-                        // @ts-expect-error
                         depthWrite={true}
                     />
                 )}
