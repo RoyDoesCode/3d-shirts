@@ -3,8 +3,9 @@ import { CSSProperties } from "react";
 import { useSnapshot } from "valtio";
 
 import state from "../store";
+import { getContrastingColor } from "../config/helpers";
 
-type ButtonType = "filled";
+type ButtonType = "filled" | "outline";
 
 interface CustomButtonProps {
     type: ButtonType;
@@ -22,11 +23,18 @@ const CustomButton = ({
     const snapshot = useSnapshot(state);
 
     const generateStyle = (type: ButtonType): CSSProperties | undefined => {
-        if (type === "filled") {
-            return {
-                backgroundColor: snapshot.color,
-                color: "#fff",
-            };
+        switch (type) {
+            case "filled":
+                return {
+                    backgroundColor: snapshot.color,
+                    color: getContrastingColor(snapshot.color),
+                };
+            case "outline":
+                return {
+                    borderWidth: "1px",
+                    borderColor: snapshot.color,
+                    color: snapshot.color,
+                };
         }
     };
 

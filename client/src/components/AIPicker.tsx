@@ -1,5 +1,5 @@
-const AiPicker = () => {
-    return <div>AiPicker</div>;
+const AIPicker = () => {
+    return <div>AIPicker</div>;
 };
 
-export default AiPicker;
+export default AIPicker;

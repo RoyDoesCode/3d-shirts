@@ -14,15 +14,15 @@ export const downloadCanvasToImage = () => {
     document.body.removeChild(link);
 };
 
-export const reader = (file: Blob) =>
+export const reader = (file: Blob): Promise<string> =>
     new Promise((resolve, _) => {
         const fileReader = new FileReader();
 
-        fileReader.onload = () => resolve(fileReader.result);
+        fileReader.onload = () => resolve(fileReader.result as string);
         fileReader.readAsDataURL(file);
     });
 
-export const getContrastingColor = (color: `#${number}`) => {
+export const getContrastingColor = (color: string) => {
     // Remove the '#' character if it exists
     const hex = color.replace("#", "");
 

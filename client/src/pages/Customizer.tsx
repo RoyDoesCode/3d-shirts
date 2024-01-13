@@ -1,13 +1,88 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useSnapshot } from "valtio";
+import { useState } from "react";
 
 import state from "../store";
 import { fadeAnimation, slideAnimation } from "../config/motion";
-import { EditorTabs, FilterTabs } from "../config/constants";
-import { CustomButton, Tab } from "../components";
+import {
+    DecalType,
+    DecalTypes,
+    EditorTabs,
+    FilterTab,
+    FilterTabs,
+    EditorTab,
+} from "../config/constants";
+import {
+    AIPicker,
+    ColorPicker,
+    CustomButton,
+    FilePicker,
+    Tab,
+} from "../components";
+import { reader } from "../config/helpers";
 
 const Customizer = () => {
     const snapshot = useSnapshot(state);
+
+    const [file, setFile] = useState<File>();
+    const [promt, setPromt] = useState("");
+    const [generatingImg, setGeneratingImg] = useState(false);
+    const [activeEditorTab, setActiveEditorTab] = useState<EditorTab>("noTab");
+    const [activeFilterTab, setActiveFilterTab] = useState<
+        Partial<Record<FilterTab, boolean>>
+    >({
+        logoShirt: true,
+        stylishShirt: false,
+    });
+
+    // show tab content based on the active tab
+    const getTabContent = () => {
+        switch (activeEditorTab) {
+            case "colorPicker":
+                return <ColorPicker />;
+            case "filePicker":
+                return (
+                    <FilePicker
+                        file={file}
+                        setFile={(newFile) => setFile(newFile)}
+                        readFile={readFile}
+                    />
+                );
+            case "aiPicker":
+                return <AIPicker />;
+            default:
+                return null;
+        }
+    };
+
+    const handleDecals = (type: DecalType, result: string) => {
+        const decalType = DecalTypes[type]!;
+
+        state[decalType.stateProperty] = result;
+
+        if (!activeFilterTab[decalType.filterTab]) {
+            handleActiveFilterTab(decalType.filterTab);
+        }
+    };
+
+    const handleActiveFilterTab = (filterTab: FilterTab) => {
+        if (filterTab === "noTab") {
+            state.isLogoTexture = true;
+            state.isFullTexture = false;
+        } else {
+            state.isLogoTexture = !activeFilterTab[filterTab];
+            state.isFullTexture = !activeFilterTab[filterTab];
+        }
+    };
+
+    const readFile = (type: DecalType) => {
+        if (!file) return;
+
+        reader(file).then((result) => {
+            handleDecals(type, result);
+            setActiveEditorTab("noTab");
+        });
+    };
 
     return (
         <AnimatePresence>
@@ -24,9 +99,13 @@ const Customizer = () => {
                                     <Tab
                                         key={tab.name}
                                         tab={tab}
-                                        onClick={() => {}}
+                                        onClick={() =>
+                                            setActiveEditorTab(tab.name)
+                                        }
                                     />
                                 ))}
+
+                                {getTabContent()}
                             </div>
                         </div>
                     </motion.div>
