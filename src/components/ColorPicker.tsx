@@ -21,7 +21,7 @@ const COLOR_PRESETS = [
 const ColorPicker = () => {
     const snapshot = useSnapshot(state);
     return (
-        <div className="absolute left-full ml-3">
+        <div className="colorpicker-container">
             <SketchPicker
                 color={snapshot.color}
                 onChange={(color) => (state.color = color.hex)}

@@ -1,32 +1,24 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useSnapshot } from "valtio";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import state from "../store";
 import { fadeAnimation, slideAnimation } from "../config/motion";
 import {
     DecalType,
-    DecalTypes,
-    EditorTabs,
+    decalTypes,
+    editorTabs,
     FilterTab,
-    FilterTabs,
+    filterTabs,
     EditorTab,
 } from "../config/constants";
-import {
-    AIPicker,
-    ColorPicker,
-    CustomButton,
-    FilePicker,
-    Tab,
-} from "../components";
+import { ColorPicker, CustomButton, FilePicker, Tab } from "../components";
 import { reader } from "../config/helpers";
 
 const Customizer = () => {
     const snapshot = useSnapshot(state);
 
     const [file, setFile] = useState<File>();
-    const [prompt, setPrompt] = useState("");
-    const [generatingImg, setGeneratingImg] = useState(false);
     const [activeEditorTab, setActiveEditorTab] = useState<EditorTab>("noTab");
     const [activeFilterTab, setActiveFilterTab] = useState<
         Partial<Record<FilterTab, boolean>>
@@ -48,34 +40,13 @@ const Customizer = () => {
                         readFile={readFile}
                     />
                 );
-            case "aiPicker":
-                return (
-                    <AIPicker
-                        prompt={prompt}
-                        setPrompt={(newPrompt) => setPrompt(newPrompt)}
-                        generatingImg={generatingImg}
-                        handleSubmit={handleAISubmit}
-                    />
-                );
             default:
                 return null;
         }
     };
 
-    const handleAISubmit = async () => {
-        if (!prompt) return;
-
-        try {
-        } catch (error) {
-            alert(error);
-        } finally {
-            setGeneratingImg(false);
-            setActiveEditorTab("noTab");
-        }
-    };
-
-    const handleDecals = (type: DecalType, result: string) => {
-        const decalType = DecalTypes[type]!;
+    const setDecal = (type: DecalType, result: string) => {
+        const decalType = decalTypes[type]!;
 
         state[decalType.stateProperty] = result;
 
@@ -108,10 +79,27 @@ const Customizer = () => {
         if (!file) return;
 
         reader(file).then((result) => {
-            handleDecals(type, result);
+            setDecal(type, result);
             setActiveEditorTab("noTab");
         });
     };
+
+    useEffect(() => {
+        const closeMenu = (event: MouseEvent) => {
+            const clicked = event.target as HTMLElement;
+            if (
+                !clicked.closest(".colorpicker-container") &&
+                !clicked.closest(".filepicker-container") &&
+                !clicked.closest(".editortabs-container")
+            ) {
+                setActiveEditorTab("noTab");
+            }
+        };
+        document.body.addEventListener("click", closeMenu, false);
+
+        return () =>
+            document.body.removeEventListener("click", closeMenu, false);
+    }, []);
 
     return (
         <AnimatePresence>
@@ -124,12 +112,16 @@ const Customizer = () => {
                     >
                         <div className="flex items-center min-h-screen">
                             <div className="editortabs-container tabs">
-                                {EditorTabs.map((tab) => (
+                                {editorTabs.map((tab) => (
                                     <Tab
                                         key={tab.name}
                                         tab={tab}
                                         onClick={() =>
-                                            setActiveEditorTab(tab.name)
+                                            setActiveEditorTab(
+                                                activeEditorTab === tab.name
+                                                    ? "noTab"
+                                                    : tab.name
+                                            )
                                         }
                                     />
                                 ))}
@@ -155,7 +147,7 @@ const Customizer = () => {
                         className="filtertabs-container"
                         {...slideAnimation("up")}
                     >
-                        {FilterTabs.map((tab) => (
+                        {filterTabs.map((tab) => (
                             <Tab
                                 key={tab.name}
                                 tab={tab}

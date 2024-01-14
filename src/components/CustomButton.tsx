@@ -10,7 +10,7 @@ type ButtonType = "filled" | "outline";
 interface CustomButtonProps {
     type: ButtonType;
     title: string;
-    onClick: () => void;
+    onClick?: () => void;
     className?: string;
 }
 
