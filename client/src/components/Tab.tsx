@@ -8,7 +8,7 @@ interface TabProps {
     tab: { name: string; icon: string };
     onClick: () => void;
     isFilterTab?: boolean;
-    isActiveTab?: string;
+    isActiveTab?: boolean;
 }
 
 const Tab = ({ tab, onClick, isFilterTab, isActiveTab }: TabProps) => {

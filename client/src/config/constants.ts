@@ -1,7 +1,7 @@
 import { swatch, fileIcon, ai, logoShirt, stylishShirt } from "../assets";
 
 export type EditorTab = "colorPicker" | "filePicker" | "aiPicker" | "noTab";
-export type FilterTab = "logoShirt" | "stylishShirt" | "noTab";
+export type FilterTab = "logoShirt" | "fullShirt" | "noTab";
 export type DecalType = "logoDecal" | "fullDecal";
 
 export const EditorTabs: { name: EditorTab; icon: string }[] = [
@@ -25,7 +25,7 @@ export const FilterTabs: { name: FilterTab; icon: string }[] = [
         icon: logoShirt,
     },
     {
-        name: "stylishShirt",
+        name: "fullShirt",
         icon: stylishShirt,
     },
 ];
@@ -45,6 +45,6 @@ export const DecalTypes: Partial<
     },
     fullDecal: {
         stateProperty: "fullDecal",
-        filterTab: "stylishShirt",
+        filterTab: "fullShirt",
     },
 };

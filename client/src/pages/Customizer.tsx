@@ -25,14 +25,14 @@ const Customizer = () => {
     const snapshot = useSnapshot(state);
 
     const [file, setFile] = useState<File>();
-    const [promt, setPromt] = useState("");
+    const [prompt, setPrompt] = useState("");
     const [generatingImg, setGeneratingImg] = useState(false);
     const [activeEditorTab, setActiveEditorTab] = useState<EditorTab>("noTab");
     const [activeFilterTab, setActiveFilterTab] = useState<
         Partial<Record<FilterTab, boolean>>
     >({
         logoShirt: true,
-        stylishShirt: false,
+        fullShirt: false,
     });
 
     // show tab content based on the active tab
@@ -49,9 +49,28 @@ const Customizer = () => {
                     />
                 );
             case "aiPicker":
-                return <AIPicker />;
+                return (
+                    <AIPicker
+                        prompt={prompt}
+                        setPrompt={(newPrompt) => setPrompt(newPrompt)}
+                        generatingImg={generatingImg}
+                        handleSubmit={handleAISubmit}
+                    />
+                );
             default:
                 return null;
+        }
+    };
+
+    const handleAISubmit = async () => {
+        if (!prompt) return;
+
+        try {
+        } catch (error) {
+            alert(error);
+        } finally {
+            setGeneratingImg(false);
+            setActiveEditorTab("noTab");
         }
     };
 
@@ -66,12 +85,22 @@ const Customizer = () => {
     };
 
     const handleActiveFilterTab = (filterTab: FilterTab) => {
-        if (filterTab === "noTab") {
-            state.isLogoTexture = true;
-            state.isFullTexture = false;
-        } else {
-            state.isLogoTexture = !activeFilterTab[filterTab];
-            state.isFullTexture = !activeFilterTab[filterTab];
+        if (filterTab === "logoShirt") {
+            state.isLogoTexture = !activeFilterTab.logoShirt;
+            setActiveFilterTab((prevState) => {
+                return {
+                    ...prevState,
+                    [filterTab]: !activeFilterTab.logoShirt,
+                };
+            });
+        } else if (filterTab === "fullShirt") {
+            state.isFullTexture = !activeFilterTab.fullShirt;
+            setActiveFilterTab((prevState) => {
+                return {
+                    ...prevState,
+                    [filterTab]: !activeFilterTab.fullShirt,
+                };
+            });
         }
     };
 
@@ -130,9 +159,9 @@ const Customizer = () => {
                             <Tab
                                 key={tab.name}
                                 tab={tab}
-                                onClick={() => {}}
+                                onClick={() => handleActiveFilterTab(tab.name)}
+                                isActiveTab={activeFilterTab[tab.name]}
                                 isFilterTab
-                                isActiveTab=""
                             />
                         ))}
                     </motion.div>
