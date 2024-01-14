@@ -13,7 +13,8 @@ import {
     EditorTab,
 } from "../config/constants";
 import { ColorPicker, CustomButton, FilePicker, Tab } from "../components";
-import { reader } from "../config/helpers";
+import { downloadCanvasToImage, reader } from "../config/helpers";
+import { download } from "../assets";
 
 const Customizer = () => {
     const snapshot = useSnapshot(state);
@@ -156,6 +157,12 @@ const Customizer = () => {
                                 isFilterTab
                             />
                         ))}
+
+                        <Tab
+                            tab={{ name: "save", icon: download }}
+                            onClick={downloadCanvasToImage}
+                            isFilterTab
+                        />
                     </motion.div>
                 </>
             )}
